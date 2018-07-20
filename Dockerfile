@@ -8,7 +8,7 @@ RUN apt-get -y upgrade
 RUN DEBIAN_FRONTEND=noninteractive apt-get -y install apache2 mysql-server libapache2-mod-php php-mysql php-gd php-pear php-apc php-curl curl lynx-cur wget unzip supervisor
 
 # Enable apache mods.
-RUN a2enmod php
+RUN a2enmod php*
 RUN a2enmod rewrite
 
 # Manually set up the apache environment variables
