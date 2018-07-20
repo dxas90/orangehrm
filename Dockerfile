@@ -21,13 +21,18 @@ ENV APACHE_PID_FILE /var/run/apache2.pid
 # Export port 80
 EXPOSE 80
 
+#config mysql
+RUN /usr/sbin/mysqld & \
+    sleep 5s &&\
+    echo "USE mysql;\nUPDATE user SET password=PASSWORD('root') WHERE user='root';\nFLUSH PRIVILEGES;\n" | mysql
+
 # Download the source
 RUN wget -c https://github.com/orangehrm/orangehrm/releases/download/v4.1.1/orangehrm-4.1.1.zip -O ~/orangehrm-3.3.2.zip &&\
     unzip -o ~/orangehrm-3.3.2.zip -d /var/www/site &&\
     rm ~/orangehrm-3.3.2.zip
 
 # Fix Permission
-RUN cd /var/www/site/orangehrm-4.1.1; bash fix_permissions.sh; exit 0
+RUN cd /var/www/site/orangehrm-4.1.1; chmod -R go+w installer symfony/apps/orangehrm/config && chmod -R go+w lib/confs symfony/log symfony/cache lib/logs symfony/config upgrader/cache upgrader/log
 
 # Update the default apache site with the config we created.
 ADD docker-build-files/apache-config.conf /etc/apache2/sites-enabled/000-default.conf
